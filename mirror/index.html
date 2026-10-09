@@ -5843,26 +5843,26 @@ function mirrorLoginScreen(msg){
     '<div style="text-align:center;margin-bottom:20px;">' +
     '<div style="font-size:2.4rem;line-height:1;">\uD83D\uDCF1</div>' +
     '<h2 style="margin:10px 0 4px;font-size:1.35rem;">Kachi Arth Phone App</h2>' +
-    '<p class="muted" style="margin:0;">\u0A15\u0A3E\u0A1A\u0A40 \u0A05\u0A30\u0A25 \u0A2B\u0A4B\u0A28 \u0A10\u0A2A · ID \u0A05\u0A24\u0A47 \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21 \u0A2A\u0A3E\u0A13</p>' +
+    '<p class="muted" style="margin:0;">Enter your login ID and password</p>' +
     '</div>' +
     (msg ? '<p style="color:var(--red);text-align:center;margin:0 0 12px;">' + esc(msg) + '</p>' : '') +
     F('Login ID', IN('m_id', '', 'text', 'email'), '') +
-    F('Password · \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21', IN('m_pw', '', 'password', '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022'), '') +
-    '<button class="btn btn-p btn-block" style="margin-top:14px;" onclick="mirrorDoLogin()">\u2705 \u0A16\u0A4B\u0A4D\u0A39\u0A4B · Open</button>' +
-    '<p style="margin:16px 0 0;text-align:center;"><a href="#" onclick="mirrorForgot();return false;" class="muted">\uD83D\uDD11 \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21 \u0A2D\u0A41\u0A71 \u0A17\u0A0F? · Forgot password?</a></p>' +
+    F('Password', IN('m_pw', '', 'password', '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022'), '') +
+    '<button class="btn btn-p btn-block" style="margin-top:14px;" onclick="mirrorDoLogin()">\u2705 Open</button>' +
+    '<p style="margin:16px 0 0;text-align:center;"><a href="#" onclick="mirrorForgot();return false;" class="muted">\uD83D\uDD11 Forgot Password?</a></p>' +
     '</div>';
-  mirrorSetPill('\uD83D\uDD12', '\u0A32\u0A3E\u0A17\u0A07\u0A28 · Login');
+  mirrorSetPill('\uD83D\uDD12', 'Login');
 }
 async function mirrorDoLogin(){
   const id = ((document.getElementById('m_id') || {}).value || '').trim().toLowerCase();
   const pw = ((document.getElementById('m_pw') || {}).value || '');
-  if(id !== MIRROR_LOGIN_ID.toLowerCase() || !pw){ mirrorLoginScreen('\u26A0\uFE0F \u0A17\u0A32\u0A24 ID \u0A1C\u0A3E\u0A02 \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21 · Wrong ID or password'); return; }
-  mirrorSetPill('\u23F3', '\u0A1C\u0A41\u0A5C \u0A30\u0A3F\u0A39\u0A3E \u0A39\u0A48… · Connecting…');
+  if(id !== MIRROR_LOGIN_ID.toLowerCase() || !pw){ mirrorLoginScreen('\u26A0\uFE0F Wrong ID or password.'); return; }
+  mirrorSetPill('\u23F3', 'Connecting…');
   let enc = null, wasOffline = false;
   if(navigator.onLine){
     try{
       const r = await fetch(MIRROR_API, { cache:'no-store' });
-      if(r.status === 404){ mirrorLoginScreen('\uD83D\uDCE1 \u0A05\u0A1C\u0A47 \u0A21\u0A47\u0A1F\u0A3E \u0A28\u0A39\u0A40\u0A02 \u0A06\u0A07\u0A06 · No data yet — the laptop syncs after install.'); return; }
+      if(r.status === 404){ mirrorLoginScreen('\uD83D\uDCE1 No data yet — the laptop syncs after install.'); return; }
       if(!r.ok) throw new Error('HTTP ' + r.status);
       const f = await r.json();
       if(!f || f.v !== 1 || !f.enc) throw new Error('bad file');
@@ -5871,26 +5871,26 @@ async function mirrorDoLogin(){
     }catch(e){
       wasOffline = true;
       try{ enc = localStorage.getItem('kachiMirrorEncCache'); }catch(e2){}
-      if(!enc){ mirrorLoginScreen('\u26A0\uFE0F \u0A07\u0A70\u0A1F\u0A30\u0A28\u0A48\u0A1F \u0A28\u0A39\u0A40\u0A02 · No connection — connect once to load.'); return; }
+      if(!enc){ mirrorLoginScreen('\u26A0\uFE0F No connection — connect once to load.'); return; }
     }
   } else {
     wasOffline = true;
     try{ enc = localStorage.getItem('kachiMirrorEncCache'); }catch(e){}
-    if(!enc){ mirrorLoginScreen('\u26A0\uFE0F \u0A07\u0A70\u0A1F\u0A30\u0A28\u0A48\u0A1F \u0A28\u0A39\u0A40\u0A02 · No connection and no saved copy yet.'); return; }
+    if(!enc){ mirrorLoginScreen('\u26A0\uFE0F No connection and no saved copy yet.'); return; }
   }
   let pt;
   try{ pt = await mirrorDecrypt(enc, pw); }
-  catch(e){ mirrorLoginScreen('\u26A0\uFE0F \u0A17\u0A32\u0A24 ID \u0A1C\u0A3E\u0A02 \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21 · Wrong ID or password.'); return; }
+  catch(e){ mirrorLoginScreen('\u26A0\uFE0F Wrong ID or password.'); return; }
   let wrap;
   try{
     wrap = JSON.parse(pt);
     if(!wrap || !wrap.db || !wrap.db.settings || !Array.isArray(wrap.db.farmers)) throw new Error('bad payload');
-  }catch(e){ mirrorLoginScreen('\u26A0\uFE0F \u0A21\u0A47\u0A1F\u0A3E \u0A16\u0A30\u0A3E\u0A2C · Data error'); return; }
+  }catch(e){ mirrorLoginScreen('\u26A0\uFE0F Data error — please try again.'); return; }
   mirrorSessionPw = pw; /* memory only — never persisted */
   mirrorApply(wrap, wasOffline);
 }
 function mirrorForgot(){
-  mirrorLoginScreen('\uD83D\uDCE7 Guntaj \u0A28\u0A42\u0A70 \u0A15\u0A39\u0A4B — \u0A28\u0A35\u0A3E\u0A02 \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21 \u0A09\u0A39\u0A28\u0A3E\u0A02 \u0A26\u0A47 email \u0A24\u0A47 \u0A06\u0A35\u0A47\u0A17\u0A3E · Ask Guntaj — a new password will come to his email.');
+  mirrorLoginScreen('\uD83D\uDCE7 Ask Guntaj — a new password will come to his email.');
 }
 async function mirrorDeriveKey(pw){
   const enc = new TextEncoder();
