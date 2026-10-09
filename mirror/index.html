@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ਕੱਚੀ ਆੜ੍ਹਤ ਮੰਡੀ</title>
+<title>Kachi Arth Phone App</title>
 <style>:root{
 .pa-wrap{display:flex;gap:6px;margin-top:6px}.pa-wrap .in{flex:1;min-width:0}.pa-kb-btn{flex:0 0 auto}
 .pa-kb-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px}.pk{min-width:40px;padding:9px 6px;font-size:18px}
@@ -5380,8 +5380,8 @@ function renderSettings(){
     /* v1.1.6: live mirror status — the phone's read-only copy. Zero-touch:
        the key is baked into the laptop build, the munim pastes nothing. */
     '<div class="crow"><span>📡 ਲਾਈਵ ਮਿਰਰ · Live mirror</span><b id="live-status" class="muted">…</b></div>' +
-    /* v1.1.7: father's encrypted mirror status */
-    '<div class="crow"><span>🔒 ਪਿਤਾ ਜੀ ਦਾ ਮਿਰਰ · Father\u2019s mirror</span><b id="fmirror-status" class="muted">…</b></div>' +
+    /* v1.1.8: phone app (encrypted mirror) status — renamed from father's mirror */
+    '<div class="crow"><span>📱 ਫੋਨ ਐਪ · Phone app</span><b id="fmirror-status" class="muted">…</b></div>' +
     /* v1.4 #2: token is pasted once and stays in the machine's own data —
        after that the input hides behind "Token saved ✓" + Change. Never
        baked into the exe (public on GitHub). */
@@ -5588,7 +5588,7 @@ function autoSaveSettings(){
 }
 /* v1.3 #3: the header version tag shows the REAL app version via the
    preload bridge — never hardcode a version string in the UI again. */
-let APP_VER = 'v1.1.5';
+let APP_VER = 'v1.1.8';
 function loadAppVer(){
   if(!(window.kachiAPI && kachiAPI.getVersion)) return;
   kachiAPI.getVersion().then(v => {
@@ -5811,8 +5811,8 @@ function cloudDownloadNow(){
   });
   });
 }
-/* ================= v1.1.7: FATHER'S MIRROR — password-gated read-only view =================
-   GitHub Pages build for the father. Differences from the master's mirror mode:
+/* ================= v1.1.8: PHONE APP — password-gated read-only view =================
+   GitHub Pages build (Kachi Arth Phone App). Differences from the master's mirror mode:
    - MIRROR is always on; there is no token and no Settings toggle.
    - Login (ID + password) on EVERY visit — the password lives only in memory,
      never in any storage. Only the encrypted copy (ciphertext) is cached for
@@ -5820,7 +5820,8 @@ function cloudDownloadNow(){
    - Data comes from mirror/books.enc (same origin): AES-256-GCM, PBKDF2-SHA256
      600k iterations, salt 'kachi-mirror-v1'. Wire: base64(iv[12]||ct||tag[16]).
    - Read-only is enforced exactly like the master (save no-op, mutating entry
-     points wrapped, confirm neutered) AND the page has no write paths. */
+     points wrapped, confirm neutered) AND the page has no write paths.
+   - Login ID check is case-insensitive (a capital D by mistake still works). */
 const MIRROR = true;
 const MIRROR_API = 'books.enc';
 const MIRROR_LOGIN_ID = 'dhillonguntaj3@gmail.com';
@@ -5838,14 +5839,17 @@ function mirrorBoot(){
 function mirrorLoginScreen(msg){
   const tb = document.getElementById('tabs'); if(tb) tb.style.display = 'none';
   document.getElementById('screen').innerHTML =
-    '<div class="card" style="max-width:480px;margin:60px auto;text-align:center">' +
-    '<h2>\uD83D\uDCF1 \u0A15\u0A3E\u0A1A\u0A40 \u0A05\u0A30\u0A25 \u0A2B\u0A4B\u0A28 \u0A10\u0A2A · Kachi Arth Phone App</h2>' +
-    '<p class="muted">ID \u0A05\u0A24\u0A47 \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21 \u0A2A\u0A3E\u0A13 · Enter login ID and password</p>' +
-    (msg ? '<p style="color:var(--red)">' + esc(msg) + '</p>' : '') +
-    '<div class="row2">' + F('Login ID', IN('m_id', '', 'text', 'email'), '') + '</div>' +
-    '<div class="row2">' + F('Password · \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21', IN('m_pw', '', 'password', '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022'), '') + '</div>' +
-    '<button class="btn btn-p btn-block" onclick="mirrorDoLogin()">\u2705 \u0A16\u0A4B\u0A4D\u0A39\u0A4B · Open</button>' +
-    '<p style="margin-top:14px"><a href="#" onclick="mirrorForgot();return false;" class="muted">\uD83D\uDD11 \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21 \u0A2D\u0A41\u0A71 \u0A17\u0A0F? · Forgot password?</a></p>' +
+    '<div class="card" style="max-width:440px;margin:32px auto;">' +
+    '<div style="text-align:center;margin-bottom:20px;">' +
+    '<div style="font-size:2.4rem;line-height:1;">\uD83D\uDCF1</div>' +
+    '<h2 style="margin:10px 0 4px;font-size:1.35rem;">Kachi Arth Phone App</h2>' +
+    '<p class="muted" style="margin:0;">\u0A15\u0A3E\u0A1A\u0A40 \u0A05\u0A30\u0A25 \u0A2B\u0A4B\u0A28 \u0A10\u0A2A · ID \u0A05\u0A24\u0A47 \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21 \u0A2A\u0A3E\u0A13</p>' +
+    '</div>' +
+    (msg ? '<p style="color:var(--red);text-align:center;margin:0 0 12px;">' + esc(msg) + '</p>' : '') +
+    F('Login ID', IN('m_id', '', 'text', 'email'), '') +
+    F('Password · \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21', IN('m_pw', '', 'password', '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022'), '') +
+    '<button class="btn btn-p btn-block" style="margin-top:14px;" onclick="mirrorDoLogin()">\u2705 \u0A16\u0A4B\u0A4D\u0A39\u0A4B · Open</button>' +
+    '<p style="margin:16px 0 0;text-align:center;"><a href="#" onclick="mirrorForgot();return false;" class="muted">\uD83D\uDD11 \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21 \u0A2D\u0A41\u0A71 \u0A17\u0A0F? · Forgot password?</a></p>' +
     '</div>';
   mirrorSetPill('\uD83D\uDD12', '\u0A32\u0A3E\u0A17\u0A07\u0A28 · Login');
 }
@@ -5876,7 +5880,7 @@ async function mirrorDoLogin(){
   }
   let pt;
   try{ pt = await mirrorDecrypt(enc, pw); }
-  catch(e){ mirrorLoginScreen('\u26A0\uFE0F \u0A17\u0A32\u0A24 ID \u0A1C\u0A3E\u0A02 \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21 · Wrong ID or password. (\u0A1C\u0A47 \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21 \u0A39\u0A41\u0A23 \u0A2C\u0A26\u0A32\u0A3F\u0A06 \u0A39\u0A48, \u0A32\u0A48\u0A2A\u0A1F\u0A3E\u0A2A \u0A26\u0A47 sync \u0A39\u0A4B\u0A23 \u0A24\u0A71\u0A15 \u0A09\u0A21\u0A40\u0A15\u0A4B · if it was just changed, wait for the laptop to sync.)'); return; }
+  catch(e){ mirrorLoginScreen('\u26A0\uFE0F \u0A17\u0A32\u0A24 ID \u0A1C\u0A3E\u0A02 \u0A2A\u0A3E\u0A38\u0A35\u0A30\u0A21 · Wrong ID or password.'); return; }
   let wrap;
   try{
     wrap = JSON.parse(pt);
@@ -5914,7 +5918,6 @@ async function mirrorPoll(){
         const pt = await mirrorDecrypt(f.enc, mirrorSessionPw);
         const wrap = JSON.parse(pt);
         if(wrap && wrap.db && wrap.pushedAt && wrap.pushedAt !== mirrorPushedAt){
-          /* never yank his screen mid-read — stash it, the pill invites a tap */
           mirrorHasNew = true; mirrorPendingWrap = wrap;
           mirrorPushedAt = wrap.pushedAt; mirrorOffline = false;
           updateMirrorPill();
