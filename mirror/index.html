@@ -2081,7 +2081,7 @@ function refreshList(which){
    'kachi-mirror-v1', 600k iterations), ciphertext cached for offline login,
    2-minute poll with a tap-to-refresh pill. Only the screens it drives are
    new: the login is restyled and mirrorApply renders this viewer. */
-const MIRROR_PW = true; /* phone-viewer build flag (the calc layer's own MIRROR const is declared above) */
+/* (The calc layer's own MIRROR const is declared above; the session password lives only in mirrorPw below — memory only, never stored.) */
 const MIRROR_API = 'books.enc';
 const MIRROR_LOGIN_ID = 'dhillonguntaj3@gmail.com';
 let mirrorSessionPw = null;
